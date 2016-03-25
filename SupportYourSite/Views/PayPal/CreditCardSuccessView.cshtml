@@ -1,0 +1,18 @@
+﻿@model PayPal.Api.Payment
+@{
+    ViewBag.Title = "CreditCardSuccessView";
+}
+
+<h2>CreditCardSuccessView</h2>
+
+<div>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.payer)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.payer)
+        </dd>
+    </dl>
+</div>

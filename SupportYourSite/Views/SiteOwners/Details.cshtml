@@ -1,0 +1,66 @@
+﻿@model SupportYourSite.Models.SiteOwner
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>SiteOwner</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Website.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Website.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OwnerName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OwnerName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OwnerEmail)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OwnerEmail)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PayPalInfo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PayPalInfo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OwnerStatement)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OwnerStatement)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OwnerBiogrpahy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OwnerBiogrpahy)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.WebsiteID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

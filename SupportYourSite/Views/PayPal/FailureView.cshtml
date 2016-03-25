@@ -1,0 +1,19 @@
+﻿@model PayPal.Api.Payment
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h4>Payment failed to process.</h4>
+<hr />
+<div>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.payer)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.payer)
+        </dd>
+    </dl>
+</div>
