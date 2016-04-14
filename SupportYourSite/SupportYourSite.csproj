@@ -68,6 +68,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -188,6 +189,7 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\PayPalController.cs" />
     <Compile Include="Controllers\SiteOwnersController.cs" />
+    <Compile Include="Controllers\Websites1Controller.cs" />
     <Compile Include="Controllers\WebsitesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -220,21 +222,31 @@
     <Compile Include="Migrations\201603181516372_websiteid.Designer.cs">
       <DependentUpon>201603181516372_websiteid.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603310125112_newupdate.cs" />
+    <Compile Include="Migrations\201603310125112_newupdate.Designer.cs">
+      <DependentUpon>201603310125112_newupdate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603311305386_fast.cs" />
+    <Compile Include="Migrations\201603311305386_fast.Designer.cs">
+      <DependentUpon>201603311305386_fast.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\AssignedCategoriesData.cs" />
     <Compile Include="Models\Comment.cs" />
     <Compile Include="Models\CreateWebsiteViewModel.cs" />
     <Compile Include="Models\CreditCard.cs" />
     <Compile Include="Models\CreditCardAttribute.cs" />
     <Compile Include="Models\Donation.cs" />
     <Compile Include="Models\DonationViewModel.cs" />
-    <Compile Include="Models\HtmlHelperExtensions.cs" />
+    <Compile Include="Models\EditWebsiteViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\RSSFeed.cs" />
     <Compile Include="Models\SiteContext.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\SiteOwner.cs" />
+    <Compile Include="Models\Type2.cs" />
     <Compile Include="Models\Website.cs" />
     <Compile Include="Models\PayPal.cs" />
     <Compile Include="Models\WebsiteIndexViewModel.cs" />
@@ -248,13 +260,19 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <Content Include="Content\Site.css" />
+    <Content Include="index.html" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\DD_belatedPNG_0.0.8a.js" />
+    <Content Include="Scripts\gl_function.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery-1.8.2.min.js" />
+    <Content Include="Scripts\jquery.nivo.slider.pack.js" />
+    <Content Include="Scripts\jquery.slide.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -333,9 +351,20 @@
     <Content Include="Views\Categories\Edit.cshtml" />
     <Content Include="Views\Categories\Index.cshtml" />
     <Content Include="Views\Websites\Index.cshtml" />
+    <Content Include="Views\Websites1\Create.cshtml" />
+    <Content Include="Views\Websites1\Delete.cshtml" />
+    <Content Include="Views\Websites1\Details.cshtml" />
+    <Content Include="Views\Websites1\Edit.cshtml" />
+    <Content Include="Views\Websites1\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="css\" />
+    <Folder Include="font-awesome\" />
+    <Folder Include="images\" />
+    <Folder Include="img\" />
+    <Folder Include="js\" />
+    <Folder Include="less\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -366,6 +395,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603181516372_websiteid.resx">
       <DependentUpon>201603181516372_websiteid.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603310125112_newupdate.resx">
+      <DependentUpon>201603310125112_newupdate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603311305386_fast.resx">
+      <DependentUpon>201603311305386_fast.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

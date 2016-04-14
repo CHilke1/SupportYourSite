@@ -3,13 +3,12 @@
 @{
     ViewBag.Title = "Details";
 }
-
-<h2>Details</h2>
-
-<div>
+<div class="container body-content">
+    <h2>Details</h2>
     <h4>Website</h4>
     <p>
-        @Html.ActionLink("Edit", "Edit", new { id = Model.website.WebsiteID }) |
+        @if (User.Identity.IsAuthenticated)
+        { @Html.ActionLink("Edit", "Edit", new { id = Model.website.WebsiteID }) } |
         @Html.ActionLink("Back to List", "Index") |
         @Html.ActionLink("Donate with PayPal", "PayWithPayPal", "PayPal", new { id = Model.website.WebsiteID }, null) |
         @Html.ActionLink("Donate with Credit Card", "PayWithCreditCard", "PayPal", new { id = Model.website.WebsiteID }, null) |
@@ -17,95 +16,129 @@
         @Html.ActionLink("SiteContent", "SiteContent", new { id = Model.website.WebsiteID }, null)
     </p>
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.website.SiteOwner.OwnerName)
-        </dt>
+    <div class="row">
+        <div class="col-sm-8">         
+            <dl class="dl-horizontal">
+                <dt>Image:</dt>
+                <dd>@if (@Model.website.Image != String.Empty)
+                        { <img src="@Model.website.Image" width="200" height="200" /> }
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.website.SiteOwner.OwnerName)
+                </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.website.SiteOwner.OwnerName)
-        </dd>
+                <dd>
+                    @Html.DisplayFor(model => model.website.SiteOwner.OwnerName)
+                </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.website.Name)
-        </dt>
+                <dt>
+                    @Html.DisplayNameFor(model => model.website.Name)
+                </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.website.Name)
-        </dd>
+                <dd>
+                    @Html.DisplayFor(model => model.website.Name)
+                </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.website.Type)
-        </dt>
+                <dt>
+                    @Html.DisplayNameFor(model => model.website.Type)
+                </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.website.Type)
-        </dd>
+                <dd>
+                    @Html.DisplayFor(model => model.website.Type)
+                </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.website.Categories)
-        </dt>
+                <dt>
+                    @Html.DisplayNameFor(model => model.website.Categories)
+                </dt>
 
-        <dd><ul>
-            @foreach (var x in Model.website.Categories)
-            {
-            <li>@x.CategoryName</li> }</ul>
-        </dd>
+                <dd>
+                    <ul>
+                        @foreach (var x in Model.website.Categories)
+                            { <li>@x.CategoryName</li> }
+                    </ul>
+                </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.website.Comments)
-        </dt>
+                <dt>
+                    @Html.DisplayNameFor(model => model.website.URL)
+                </dt>
 
-        <dd>
-            <ul>
-                @foreach (var x in Model.website.Comments)
-            {
-                    <li>@x.CommentText</li> }
-            </ul>
-        </dd>
+                <dd>
+                    <A href="@Html.DisplayFor(model => model.website.URL)">@Html.DisplayFor(model => model.website.URL)</A>
+                </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.website.URL)
-        </dt>
+                <dt>
+                    @Html.DisplayNameFor(model => model.website.iTunes)
+                </dt>
 
-        <dd>
-            <A href="@Html.DisplayFor(model => model.website.URL)">@Html.DisplayFor(model => model.website.URL)</A>
-        </dd>
+                <dd>
+                    <A href="@Html.DisplayFor(model => model.website.iTunes)">@Html.DisplayFor(model => model.website.iTunes)</A>
+                </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.website.iTunes)
-        </dt>
+                <dt>
+                    @Html.DisplayNameFor(model => model.website.RSS)
+                </dt>
 
-        <dd>
-            <A href="@Html.DisplayFor(model => model.website.iTunes)">@Html.DisplayFor(model => model.website.iTunes)</A>
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.website.RSS)
-        </dt>
-
-        <dd>
-            <A href="@Html.DisplayFor(model => model.website.RSS)">@Html.DisplayFor(model => model.website.RSS)</A>
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.website.Description)
-        </dt>
-    </dl>
-<h4>Comments:</h4>
-</div>
-    @foreach (var x in Model.website.Comments)
-    {
-        <div>
-            <div><strong>@x.CommentName</strong> @x.CommentText</div>
+                <dd>
+                    <A href="@Html.DisplayFor(model => model.website.RSS)">@Html.DisplayFor(model => model.website.RSS)</A>
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.website.Description)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.website.Description)
+                </dd>
+            </dl>
         </div>
-    }
-<hr />
-<h4>Donations:</h4>
-<table>
-    @foreach (var x in Model.donations)
-    {
-        <tr><td>@x.Amount</td><td><b>@x.FirstName &nbsp; @x.LastName</b></td></tr>
-        if (!String.IsNullOrEmpty(x.Comment)) { <tr>@x.Comment</tr>}
-    }
-</table>
+        <div class="col-sm-4">
+            <h4>Donations:</h4>
+            @if (Model.donations.Count == 0)
+            {
+                <ul><li>No donations yet.</li></ul>
+            }
+            else
+            {
+                foreach (var x in Model.donations)
+                {
+                    <ul>
+                        <li>
+                            $@Math.Round(x.Amount, 2) - <b>@x.FirstName @x.LastName</b> - @String.Format("{0:dddd, MMMM d, yyyy}", x.Date)<br />
+                                @if (!String.IsNullOrEmpty(x.Comment))
+                            { @x.Comment.ToString() }
+                        </li>
+                    </ul>
+                }
+            }
+            
+        </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-8">
+            <h4>Comments:</h4>
+            @if (Model.website.Comments.Count == 0)
+            {
+                <p>No Comments Yet.</p>
+            }
+            else
+            {
+                <dl>
+                    @foreach (var x in Model.website.Comments)
+                    {
+
+                    <dt>
+                        @String.Format("{0:dddd, MMMM d, yyyy}", x.DatePosted)
+                        <strong>- @x.CommentName</strong>
+                    </dt>
+                    <dd> @x.CommentText </dd>
+                    }
+                </dl>
+            }</div>
+        </div>
+    </div>     
+
+
+
+
+
+
+
+

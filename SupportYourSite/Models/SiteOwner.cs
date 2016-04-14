@@ -15,8 +15,6 @@ namespace SupportYourSite.Models
         [MaxLength(100), MinLength(2)]
         public string OwnerName { get; set; }
         [Display(Name = "Email address")]
-        [Required(ErrorMessage = "The email address is required")]
-        [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string OwnerEmail { get; set; }
         public string PayPalInfo { get; set; }
         public string OwnerStatement { get; set; }

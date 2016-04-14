@@ -276,6 +276,7 @@ table {
   }
   .navbar {
     display: none;
+    color: #fff;
   }
   .table td,
   .table th {

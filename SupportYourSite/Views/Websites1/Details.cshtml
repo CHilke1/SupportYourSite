@@ -1,0 +1,90 @@
+﻿@model SupportYourSite.Models.Website
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Website</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.SiteOwner.OwnerName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SiteOwner.OwnerName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Type)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Type)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.URL)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.URL)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.iTunes)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.iTunes)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RSS)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RSS)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Image)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Image)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SiteOwnerID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SiteOwnerID)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.WebsiteID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -39,8 +39,16 @@ namespace SupportYourSite.Controllers
         // GET: Comments/Create
         public ActionResult Create(int? id)
         {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
             //ViewBag.WebsiteID = new SelectList(db.Website, "WebsiteID", "Name");
             ViewBag.WebsiteID = id;
+            var sitename = (from Website in db.Website
+                                            where Website.WebsiteID == id
+                                            select Website.Name).FirstOrDefault();
+            ViewBag.WebsiteName = sitename.ToString();
             return View();
         }
 

@@ -8,6 +8,9 @@ using System.Web;
 using System.Web.Mvc;
 using SupportYourSite.Models;
 using System.Xml;
+using System.Text;
+using System.Xml.Linq;
+using System.ServiceModel.Syndication;
 
 namespace SupportYourSite.Controllers
 {
@@ -16,33 +19,14 @@ namespace SupportYourSite.Controllers
         private SiteContext db = new SiteContext();
 
         // GET: Websites
-        public ActionResult Index(string sortOrder, string searchString, int? Categories)
+        public ActionResult Index(int? Categories, int? type)
         {
-            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewBag.TypeSortParm = sortOrder == "Type" ? "type_desc" : "Type";
             ViewBag.Categories = new SelectList(db.Category.ToList(), "CategoryID", "CategoryName");
 
             var website = db.Website.Include(w => w.SiteOwner).Include(w => w.Categories);
 
-            if (!String.IsNullOrEmpty(searchString)) { website = website.Where(s => s.Name.ToUpper().Contains(searchString.ToUpper()) || s.Description.ToUpper().Contains(searchString.ToUpper())); }
             if (Categories != null) { website = website.Where(c => c.Categories.Any(o => o.CategoryID == Categories)); }
-
-            switch (sortOrder)
-            {
-                case "name_desc":
-                    website = website.OrderByDescending(s => s.Name);
-                    break;
-                case "Type":
-                    website = website.OrderBy(s => s.Type);
-                    break;
-                case "date_desc":
-                    website = website.OrderByDescending(s => s.Type);
-                    break;
-                default:
-                    website = website.OrderBy(s => s.Name);
-                    break;
-            }
-
+            if (type != null) { website = website.Where(w => (int)w.Type == type); }
             var websiteList = new List<WebsiteIndexViewModel>();
             foreach (Website w in website)
             {
@@ -53,7 +37,6 @@ namespace SupportYourSite.Controllers
                 {
                     websiteIndexViewModel.Categories.Add(c.CategoryName);
                 }
-                //websiteIndexViewModel.Category = w.Categories;
                 websiteIndexViewModel.Siteowner = w.SiteOwner.OwnerName;
                 websiteIndexViewModel.URL = w.URL;
                 websiteIndexViewModel.Description = w.Description;
@@ -84,27 +67,22 @@ namespace SupportYourSite.Controllers
             donations = (from d in db.Donation
                       where d.Website.WebsiteID == id
                       select d).ToList();
-
             //retrieve rss data
-            string desc;
-            string img;
             string myRSS = website.RSS;
-            XmlDocument doc = new XmlDocument();         
+            XmlDocument doc = new XmlDocument();          
             try
             {
                 doc.Load(myRSS);
-                desc = doc.SelectSingleNode("//channel/description").InnerText;
-                img = doc.SelectSingleNode("//channel/image/url").InnerText;
-                if (img != String.Empty)
-                {
-                    website.Image = img;
-                    website.Description = desc;
-                }
+                website.Description = doc.SelectSingleNode("//channel/description").InnerText;
+                website.Image = doc.SelectSingleNode("//channel/image/url").InnerText;
             }
             catch
             {
-                desc = "No Description Provided.";
-                img = "";
+                if (String.IsNullOrEmpty(website.Description))
+                {
+                    website.Description = "No Description Provided.";
+                }
+                website.Image = String.Empty;
             }
 
             var websiteViewModel = new WebsiteViewModel();
@@ -171,6 +149,7 @@ namespace SupportYourSite.Controllers
             {
                 return HttpNotFound();
             }
+            PopulateAssignedCategoriesData(website);
             ViewBag.WebsiteID = new SelectList(db.SiteOwners, "WebsiteID", "OwnerName", website.WebsiteID);
             return View(website);
         }
@@ -178,7 +157,7 @@ namespace SupportYourSite.Controllers
         // POST: Websites/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        /*[HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "WebsiteID,Name,Type,URL,iTunes,RSS,Description,SiteOwnerID")] Website website)
         {
@@ -190,6 +169,55 @@ namespace SupportYourSite.Controllers
             }
             ViewBag.WebsiteID = new SelectList(db.SiteOwners, "WebsiteID", "OwnerName", website.WebsiteID);
             return View(website);
+        }*/
+
+        // POST: Websites/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(Website website, string[] selectedCategories)
+        {
+            //if (ModelState.IsValid)
+            //{
+            //   return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            //}
+            var websiteToUpdate = db.Website.Include(i => i.Categories).Include(i => i.SiteOwner).Where(i => i.WebsiteID == website.WebsiteID).Single();
+            websiteToUpdate.SiteOwnerID = website.SiteOwnerID;
+            UpdateInstructorCourses(selectedCategories, websiteToUpdate);
+            db.Entry(websiteToUpdate).State = EntityState.Modified;
+            db.SaveChanges();
+            return RedirectToAction("Index");
+            //ViewBag.WebsiteID = new SelectList(db.SiteOwners, "WebsiteID", "OwnerName", website.WebsiteID);
+            //return View(website);
+        }
+
+        private void UpdateInstructorCourses(string[] selectedCategories, Website websiteToUpdate)
+        {
+            if (selectedCategories == null)
+            {
+                websiteToUpdate.Categories = new List<Category>();
+                return;
+            }
+            var selectedCoursesHS = new HashSet<string>(selectedCategories);
+            var instructorCourses = new HashSet<int>(websiteToUpdate.Categories.Select(c => c.CategoryID));
+            foreach (var category in db.Category)
+            {
+                if (selectedCoursesHS.Contains(category.CategoryID.ToString()))
+                {
+                    if (!instructorCourses.Contains(category.CategoryID))
+                    {
+                        websiteToUpdate.Categories.Add(category);
+                    }
+                }
+                else
+                {
+                    if (instructorCourses.Contains(category.CategoryID))
+                    {
+                        websiteToUpdate.Categories.Remove(category);
+                    }
+                }
+            }
         }
 
         // GET: Websites/Delete/5
@@ -326,6 +354,22 @@ namespace SupportYourSite.Controllers
             }
 
             return View(website.ToList());
+        }
+        private void PopulateAssignedCategoriesData(Website website)
+        {
+            var allCategories = db.Category;
+            var websiteCategories = new HashSet<int>(website.Categories.Select(c => c.CategoryID));
+            var viewModel = new List<AssignedCategoriesData>();
+            foreach (var category in allCategories)
+            {
+                viewModel.Add(new AssignedCategoriesData
+                {
+                    CategoryID = category.CategoryID,
+                    Name = category.CategoryName,
+                    Assigned = websiteCategories.Contains(category.CategoryID)
+                });
+            }
+            ViewBag.Categories = viewModel;
         }
     }
 }

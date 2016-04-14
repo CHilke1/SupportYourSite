@@ -5,79 +5,65 @@
     ViewBag.Title = "Websites";
     var initialData = new JavaScriptSerializer().Serialize(Model);
 }
-
-<h2>Websites</h2>
-
-<b>Filters:</b><br />
-@using (Html.BeginForm())
-{ <p> Find by name: @Html.DropDownList("Categories", null, new { @onchange = "this.form.submit()" , @class = "form-control" } )</p> }
-<div class="form-group col-sm-6">
-    <b>Sorts:</b><br />
-    Field:<br />
-    <select class="form-control" data-bind="options: sorter.sortOptions, optionsText: 'Name', value: sorter.currentSortOption"></select>&nbsp;&nbsp;
-    Direction:
-    <select class="form-control" data-bind="options: sorter.sortDirections, optionsText: 'Name', value: sorter.currentSortDirection"></select>
-</div>
-<div class="row">
-    <div class="col-sm-6">
-        <div data-bind="foreach: filter.filters">
-            <div class="form-group">
-                <span data-bind="text: Name"></span>:
-            </div>
-            <div class="form-group" data-bind="if: Type == 'select'">
-                <select class="form-control" data-bind="options: Options, optionsText: 'Name', value: CurrentOption"></select>
-            </div>
-            <div class="form-group" data-bind="if: Type == 'text'">
-                <input class="form-control" type="text" data-bind="value: Value, valueUpdate: 'afterkeydown'" />
+<div class="container body-content">
+    <h2>Websites</h2>
+    <p>
+        @if (User.Identity.IsAuthenticated)
+        { @Html.ActionLink("Add Site", "Create") }
+    </p>
+    <br />
+    <div class="row">
+        <div class="form-group col-sm-6">
+            @using (Html.BeginForm())
+            { <span> Choose a category:</span><br /> @Html.DropDownList("Categories", null, new { @onchange = "this.form.submit()", @class = "form-control" })
+                <span> Choose a type:</span><br /> @Html.DropDownList("type", EnumHelper.GetSelectList(typeof(SupportYourSite.Models.Type)), "Site Type", new { @onchange = "this.form.submit()", @class = "form-control" }); }
+        </div>
+        <div class="form-group col-sm-6">
+            <div data-bind="foreach: filter.filters">
+                <div class="form-group">
+                    <span data-bind="text: Name"></span>
+                </div>
+                <div class="form-group" data-bind="if: Type == 'select'">
+                    <select class="form-control" data-bind="options: Options, optionsText: 'Name', value: CurrentOption"></select>
+                </div>
+                <div class="form-group" data-bind="if: Type == 'text'">
+                    <input class="form-control" type="text" data-bind="value: Value, valueUpdate: 'afterkeydown'" />
+                </div>
             </div>
         </div>
     </div>
-</div>
-<div class="row">
-    <div class="Pager"></div>
-</div>
-<div class="row">
-    <div class="NoRecords"></div>
-</div>
-<div class="table-responsive">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.ActionLink("Name", "Index2", new { sortOrder = ViewBag.NameSortParm })
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.URL)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Type)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Siteowner)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Categories)
-                </th>
-                <th>link</th>
-            </tr>
-        </thead>
-        <tbody data-bind="foreach: pager.currentPageRecords">
-            <tr>
-                <td><span data-bind="text: Name"></span></td>
-                <td><a data-bind="attr: { href: URL }">Website</a></td>
-                <td><span data-bind="text: Type"></span></td>
-                <td><span data-bind="text: Siteowner"></span></td>
-                <td><ul data-bind="foreach: Categories">
-                        <li><span data-bind="text: $data"> </span></li> 
-                    </ul></td>
-                <td><a data-bind="attr: { href: WebsiteId }">More Info</a></td>               
-            </tr>
+    <div class="row">
+        <div class="form-group col-sm-6">
+            <b>Sort by:</b><br />
+            Field:<br />
+            <select class="form-control" data-bind="options: sorter.sortOptions, optionsText: 'Name', value: sorter.currentSortOption"></select>
+            Direction:
+            <select class="form-control" data-bind="options: sorter.sortDirections, optionsText: 'Name', value: sorter.currentSortDirection"></select>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="Pager"></div>
+            <div class="NoRecords"></div>
+        </div>
+    </div>
 
-</table>
+    <div class="row">
+            <div class="mainbox col-sm-12" data-bind="foreach: pager.currentPageRecords">
+                <div class="card col-sm-4">
+                    <h3><span data-bind="text: Name"></span></h3>
+                    Website: <a data-bind="attr: { href: URL }">Link</a><br/>
+                    Type: <span data-bind="text: Type"></span><br />
+                    Owner: <span data-bind="text: Siteowner"></span><br />
+                    Categories: <ul data-bind="foreach: Categories">
+                        <li><span data-bind="text: $data"> </span></li>
+                    </ul>
+                    <a data-bind="attr: { href: WebsiteId }">More Info</a>
+                </div>
+            </div>
+    </div>
 </div>
-@section Scripts {
-<script src="~/Scripts/knockout-3.4.0.js"></script>
-    <script>
+    @section Scripts {
+        <script src="~/Scripts/knockout-3.4.0.js"></script>
+        <script>
             function CustomerModel(data) {
                 if (!data) {
                     data = {};
@@ -86,15 +72,16 @@
                 var self = this;
                 self.WebsiteId = 'Websites/Details/' + data.WebsiteId;
                 self.Name = data.Name;
+                self.Image = data.Image;
                 self.Description = data.Description;
                 self.URL = data.URL;
                 self.Type = data.Type;
-                self.Siteowner = data.Siteowner;  
+                self.Siteowner = data.Siteowner;
                 self.Categories = ko.observableArray();
                 for (var i = 0; i < data.Categories.length; i++) {
                     self.Categories.push(data.Categories[i]);
                 }
-                self.Type = data.Type;    
+                self.Type = data.Type;
             };
 
             function catarray(arr) {
@@ -123,7 +110,7 @@
                     Value: ko.observable(""),
                     RecordValue: function (record) { return record.Name; }
                 },
-                //{ Type: "text", Name: "Description", Value: ko.observable(""), RecordValue: function (record) { return record.Description; } }
+                { Type: "text", Name: "Owner", Value: ko.observable(""), RecordValue: function (record) { return record.Siteowner; } }
 
                 ];
                 var sortOptions = [{
@@ -131,7 +118,7 @@
                     Value: "Name",
                     Sort: function (left, right) { return CompareCaseInsensitive(left.name, right.name); }
                 },
-                { Name: "Site Owner", Value: "Siteowner", Sort: function (left, right) { return CompareCaseInsensitive(left.name, right.name); } }
+                { Name: "Owner", Value: "Siteowner", Sort: function (left, right) { return CompareCaseInsensitive(left.name, right.name); } }
                 ];
                 self.filter = new FilterModel(filters, self.customers);
                 self.sorter = new SorterModel(sortOptions, self.filter.filteredRecords);
@@ -201,21 +188,19 @@
                         || newIndex > self.maxPageIndex()) {
                         return;
                     }
-
                     self.currentPageIndex(newIndex);
                 };
                 self.onPageSizeChange = function () {
                     self.currentPageIndex(0);
                 };
                 self.renderPagers = function () {
-                    var pager = "<div class=\"form-horizontal col-sm-6\" data-toggle=\"buttons-radio\"><a class=\"btn btn-small btn-info\" href=\"#\" data-bind=\"click: pager.moveFirst, enable: pager.currentPageIndex() > 0\"> <span class=\"glyphicon glyphicon-fast-backward\"></span></a><a class=\"btn btn-small btn-info\" href=\"#\" data-bind=\"click: pager.movePrevious, enable: pager.currentPageIndex() > 0\"><span class=\"glyphicon glyphicon-step-backward\"></span></a><a class=\"btn btn-small btn-info\" href=\"#\" data-bind=\"click: pager.moveNext, enable: pager.currentPageIndex() < pager.maxPageIndex()\"><span class=\"glyphicon glyphicon-step-forward\"></span></a><a class=\"btn btn-small btn-info\" href=\"#\" data-bind=\"click: pager.moveLast, enable: pager.currentPageIndex() < pager.maxPageIndex()\"><span class=\"glyphicon glyphicon-fast-forward\"></span></a></div><div class=class=\"form-group col-xs-6\"><span class=\"pull-left\">Page <span data-bind=\"text: pager.currentPageIndex() + 1\"></span> of <span data-bind=\"text: pager.maxPageIndex() + 1\"></span> [<span data-bind=\"text: pager.recordCount\"></span> Record(s)]<select class=\"form-control\" data-bind=\"options: pager.pageSizeOptions, value: pager.currentPageSize, event: { change: pager.onPageSizeChange }\"></select></span></div>";
+                    var pager = "<div><a class=\"btn btn-small btn-info\" href=\"#\" data-bind=\"click: pager.moveFirst, enable: pager.currentPageIndex() > 0\"> <span class=\"glyphicon glyphicon-fast-backward\"></span></a><a class=\"btn btn-small btn-info\" href=\"#\" data-bind=\"click: pager.movePrevious, enable: pager.currentPageIndex() > 0\"><span class=\"glyphicon glyphicon-step-backward\"></span></a><a class=\"btn btn-small btn-info\" href=\"#\" data-bind=\"click: pager.moveNext, enable: pager.currentPageIndex() < pager.maxPageIndex()\"><span class=\"glyphicon glyphicon-step-forward\"></span></a><a class=\"btn btn-small btn-info\" href=\"#\" data-bind=\"click: pager.moveLast, enable: pager.currentPageIndex() < pager.maxPageIndex()\"><span class=\"glyphicon glyphicon-fast-forward\"></span></a></div><div class=class=\"form-group col-xs-6\"><span class=\"pull-left\">Page <span data-bind=\"text: pager.currentPageIndex() + 1\"></span> of <span data-bind=\"text: pager.maxPageIndex() + 1\"></span> [<span data-bind=\"text: pager.recordCount\"></span> Record(s)]<select class=\"form-control\" data-bind=\"options: pager.pageSizeOptions, value: pager.currentPageSize, event: { change: pager.onPageSizeChange }\"></select></span></div>";
                     $("div.Pager").html(pager);
                 };
                 self.renderNoRecords = function () {
                     var message = "<span data-bind=\"visible: pager.recordCount() == 0\">No records found.</span>";
                     $("div.NoRecords").html(message);
                 };
-
                 self.renderPagers();
                 self.renderNoRecords();
             }
@@ -388,7 +373,6 @@
                         }
                     }
                 }
-
                 return array;
             }
 
@@ -407,5 +391,5 @@
 
             ko.applyBindings(new CustomerPageModel(testWebsites));
 
-    </script>
-}
+        </script>
+    }

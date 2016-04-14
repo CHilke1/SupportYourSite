@@ -14,7 +14,6 @@ namespace SupportYourSite.Models
         Artist,
         Other,
     }
-
     public class Website
     {
         public Website()
